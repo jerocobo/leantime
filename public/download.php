@@ -119,6 +119,8 @@ function getFileFromS3(){
     $s3Client = new Aws\S3\S3Client([
         'version'     => 'latest',
         'region'      => $config->s3Region,
+        'endpoint' => $config->s3EndPoint,
+        'use_path_style_endpoint' => $config->s3UsePathStyleEndpoint,
         'credentials' => [
             'key'    => $config->s3Key,
             'secret' => $config->s3Secret
@@ -126,10 +128,12 @@ function getFileFromS3(){
     ]);
 
     try {
-
+        // implode all non-empty elements to allow s3FolderName to be empty. 
+        // otherwise you will get an error as the key starts with a slash
+        $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
         $cmd = $s3Client->getCommand('GetObject', [
             'Bucket' => $config->s3Bucket,
-            'Key' => $config->s3FolderName."/".$encName.".".$ext,
+            'Key' => $fileName,
             'ResponseContentDisposition' => "filename=".$realName.".".$ext.""
         ]);
 

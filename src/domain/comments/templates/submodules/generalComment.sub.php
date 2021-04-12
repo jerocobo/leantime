@@ -23,7 +23,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 	</a>
 	<div id="comment0" class="commentBox">
 		<!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
-		<textarea rows="5" cols="50" class="tinymce"
+		<textarea rows="5" cols="50" class="tinymceSimple"
 				  name="text"></textarea><br/>
 		<input type="submit" value="<?php echo $this->__('buttons.save') ?>"
 			   name="comment" class="btn btn-default btn-success"
@@ -40,13 +40,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
 				<div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
 					<img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['profileId'] ?>"
 						 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
-					<div class="right"><?php printf(
-							$this->__('text.written_on'),
-							$this->getFormattedDateString($row['date']),
-							$this->getFormattedTimeString($row['date'])
-						); ?></div>
-					<strong><?php $this->e($row['firstname']); ?><?php $this->e($row['lastname']); ?></strong><br/>
-					<div style="margin-left:60px;"><?php echo nl2br(($row['text'])); ?></div>
+					<div class="right"><?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+							$this->getFormattedTimeString($row['date']) ); ?></div>
+					<strong>
+					<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+					</strong><br/>
+					<div style="margin-left:60px;"><?php echo nl2br($row['text']); ?></div>
 					<div class="clear"></div>
 					<div style="padding-left:60px">
 						<a href="javascript:void(0);"
@@ -79,13 +78,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
 								 style="float:left; width:50px; margin-right:10px; padding:2px;"/>
 							<div>
 								<div class="right">
-									<?php printf(
-										$this->__('text.written_on'),
-										$this->getFormattedDateString($row['date']),
-										$this->getFormattedTimeString($row['date'])
-									); ?></div>
-								<strong><?php $this->e($comment['firstname']); ?><?php $this->e($comment['lastname']); ?></strong><br/>
-								<p style="margin-left:60px;"><?php echo nl2br(($comment['text'])); ?></p>
+									<?php printf( $this->__('text.written_on'), $this->getFormattedDateString($row['date']),
+										$this->getFormattedTimeString($row['date']) ); ?></div>
+								<strong>
+								<?php printf( $this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+								</strong><br/>
+								<p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
 								<div class="clear"></div>
 
 								<div style="padding-left:60px">
@@ -114,10 +112,10 @@ if (strpos($formUrl, '?delComment=') !== false) {
         }
         jQuery('.commentBox').hide('fast', function () {
             jQuery('.commentBox textarea').remove();
-            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymce"></textarea>');
-            leantime.ticketsController.initTicketEditor();
-
+            jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            leantime.generalController.initSimpleEditor();
         });
+
         jQuery('#comment' + id + '').show('fast');
         jQuery('#father').val(id);
     }

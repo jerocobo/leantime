@@ -136,6 +136,9 @@ namespace leantime\domain\services {
 
             //Email
             $users = $this->getUsersToNotify($projectId);
+            $users = array_filter($users, function($user, $k) { 
+                return $user != $_SESSION['userdata']['mail']; 
+            }, ARRAY_FILTER_USE_BOTH);
 
             $mailer = new core\mailer();
             $mailer->setSubject($subject);
@@ -359,6 +362,8 @@ namespace leantime\domain\services {
                             $this->tpl->setNotification("You are not assigned to any projects. Please ask an administrator to assign you to one.",
                                 "info");
 
+
+
                             if ($route != "users.editOwn") {
                                 $this->tpl->redirect(BASE_URL . "/users/editOwn");
                             }
@@ -382,8 +387,8 @@ namespace leantime\domain\services {
 
                     $_SESSION["currentProject"] = $projectId;
 
-                    if (strlen($project['name']) > 25) {
-                        $_SESSION["currentProjectName"] = substr($project['name'], 0, 25) . " (...)";
+                    if (mb_strlen($project['name']) > 25) {
+                        $_SESSION["currentProjectName"] = mb_substr($project['name'], 0, 25) . " (...)";
                     } else {
                         $_SESSION["currentProjectName"] = $project['name'];
                     }
@@ -399,6 +404,9 @@ namespace leantime\domain\services {
                     $_SESSION['lastFilterdTicketKanbanView'] = "";
 
                     $this->settingsRepo->saveSetting("usersettings.".$_SESSION['userdata']['id'].".lastProject", $_SESSION["currentProject"]);
+
+                    $_SESSION["projectsettings"]['commentOrder'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".commentOrder");
+                    $_SESSION["projectsettings"]['ticketLayout'] = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".ticketLayout");
 
                     return true;
 
